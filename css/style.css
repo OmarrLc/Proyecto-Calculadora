@@ -1,0 +1,51 @@
+body {
+    margin: 0;
+    padding: 0;
+}
+
+.header {
+    width: 100%;
+    height: 10%;
+    background-color: #206a5d;
+    padding: 10px 0;
+    color: white;
+}
+
+.formulario {
+    padding: 5% 20%;
+}
+
+.formularioModal {
+    padding: 0 10%;
+}
+
+.btn {
+    background-color: #81b214!important;
+    border: 1px #206a5d solid;
+    padding: 5px 50px;
+}
+
+.btn:focus {
+    border: 1px #206a5d solid;
+}
+
+.form-control {
+    border: 1px #206a5d solid;
+}
+
+.form-control:focus {
+    border: 1px #81b214 solid!important;
+}
+
+.text {
+    font-weight: 500!important;
+}
+
+.modal-footer {
+    display: block
+}
+
+.headerTabla {
+    background-color: #206a5d!important;
+    color: white;
+}
