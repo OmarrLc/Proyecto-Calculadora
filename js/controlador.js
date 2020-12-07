@@ -1,5 +1,39 @@
-function calcular() {
+var historial = []
 
+
+var tipos = ["Diesel", "2 Tiempos", "4 Tiempos"]
+
+var localStorage = window.localStorage;
+
+if (localStorage.getItem('historial')==null){
+    localStorage.setItem('historial',JSON.stringify(historial));
+}
+else{
+    historial = JSON.parse(localStorage.getItem('historial'));
+}
+function actualizarHistorial(){
+    document.getElementById("registros").innerHTML = ""
+    for(let i=0; i<historial.length;i++){
+        document.getElementById("registros").innerHTML += `
+            <tr>
+                <th scope="row">${historial[i].Fechas}</th>
+                <td>${historial[i].Area}</td>
+                <td>${historial[i].Tipo}</td>
+                <td>${historial[i].Potencia}</td>
+                <td>${historial[i].Tiempo}</td>
+                <td>${historial[i].Consumo}</td>
+                <td>${historial[i].Gasto}</td>
+            </tr>
+        `
+    }
+}
+
+actualizarHistorial()
+
+function calcular() {
+    var hoy = new Date()
+    var fecha = hoy.getDate() + '-' + ( hoy.getMonth() + 1 ) + '-' + hoy.getFullYear();
+    hora = hoy.getHours() + ':' + hoy.getMinutes() + ':' + hoy.getSeconds();
     const area = parseFloat(document.getElementById('txtTerreno').value)
     const tipoMotor = parseFloat(document.getElementById('txtTipoMotor').value)
     const potencia = parseFloat(document.getElementById('txtPotencia').value)
@@ -86,6 +120,7 @@ function calcular() {
     var flag = true;
     var interval;
     var updateInterval = 500;
+
     $('#playPause').click(function() {
         if (flag && count < arrayValores.length) {
             $(this).html('Pause');
@@ -98,6 +133,19 @@ function calcular() {
         }
         flag = !flag;
     });
+    let temp = {
+        "Fechas": fecha + ' ' + hora,
+        "Area": area,
+        "Tipo": tipos[tipoMotor],
+        "Potencia": potencia,
+        "Tiempo": ttm,
+        "Consumo": cl.toFixed(2),
+        "Gasto":gt.toFixed(2) 
+        }
+    historial.push(temp)
+    localStorage.setItem('historial',JSON.stringify(historial));
+    actualizarHistorial()
 }
+
 
 //console.log(Math.ceil(1.5)); // redondea al mayor
