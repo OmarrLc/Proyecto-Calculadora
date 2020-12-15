@@ -1,8 +1,7 @@
+//HISTORIAL
+
 var historial = []
-
-
 var tipos = ["Diesel", "2 Tiempos", "4 Tiempos"]
-
 var localStorage = window.localStorage;
 
 if (localStorage.getItem('historial') == null) {
@@ -28,9 +27,14 @@ function actualizarHistorial() {
     }
 }
 
+
+
 actualizarHistorial()
 
 function calcular() {
+
+    //variables necesarias 
+
     var hoy = new Date()
     var fecha = hoy.getDate() + '-' + (hoy.getMonth() + 1) + '-' + hoy.getFullYear();
     var hora = hoy.getHours() + ':' + hoy.getMinutes() + ':' + hoy.getSeconds();
@@ -41,14 +45,20 @@ function calcular() {
     const min = parseFloat(document.getElementById('txtMin').value)
     const max = parseFloat(document.getElementById('txtMax').value)
     const capacidad = parseFloat(document.getElementById('txtCapacidad').value) //Capacidad del motor en litros
-        //console.log(prueba)
-        //  console.log(parseFloat(area))
     var areatemp = area
     var litros;
     var cl; // consumo en litros 
     var h = 0
+    var arrayValores = []; // arreglo para los valores de la gráfica
     var arrayValores2 = []; // arreglo para los valores de la gráfica
-    var promedio
+    var promedio;
+    var ttm; // tiempo total que trabajará el motor
+    var tiempoLlenado
+    var error = false
+
+
+    // CÁLCULOS PARA GRÁFICA ÁREA vs TIEMPO
+
     while (areatemp > 0) {
         promedio = Math.floor(Math.random() * (max - min) + min)
         if (areatemp >= promedio) {
@@ -66,13 +76,10 @@ function calcular() {
             }
             areatemp = 0
         }
-        console.log(promedio)
         arrayValores2.push(valores);
-
     }
-    var ttm = h; // tiempo total que trabajará el motor
-    var tiempoLlenado
-    var error = false
+    ttm = h;
+    console.log('h', h)
     if (tipoMotor === 0) {
         litros = 0.23
         tiempoLlenado = capacidad / (potencia * litros)
@@ -88,6 +95,7 @@ function calcular() {
         tiempoLlenado = capacidad / (potencia * litros)
     }
 
+    //CONDICIONAL PARA LA CAPACIDAD DE LA BOMBA
     if (tiempoLlenado < ttm) {
         document.getElementById('error').innerHTML = 'Ha alcanzado la capacidad maxima del motor';
         ttm = tiempoLlenado
@@ -95,6 +103,7 @@ function calcular() {
     } else {
         document.getElementById('error').innerHTML = '';
     }
+    console.log('ttm', ttm)
 
     if (tipoMotor === 0) {
         litros = 0.23
@@ -110,18 +119,28 @@ function calcular() {
         litros = 0.43
         cl = ttm * potencia * litros
     }
-    console.log(cl)
-    var gt = cl * pc // gasto total
-    console.log('gasto', gt);
-    console.log('consumo', cl)
-    $("#txtConsumo").val(cl.toFixed(2));
-    $("#txtGasto").val(gt.toFixed(2));
+    console.log('cl', cl)
+        // CÁLCULOS A MOSTRAR
+    var gt = cl * pc
+    $("#txtConsumo").val(cl.toFixed(2)); // consumo en litros
+    $("#txtGasto").val(gt.toFixed(2)); // gasto total
 
-    console.log(ttm)
-    var limitX = Math.ceil(ttm); // redondeando el valor de las horas totales
-    console.log('x:', limitX);
+    // Objeto para almacenar en la db. 
+    let temp = {
+        "Fechas": fecha + ' ' + hora,
+        "Area": area,
+        "Tipo": tipos[tipoMotor],
+        "Potencia": potencia,
+        "Tiempo": ttm,
+        "Consumo": cl.toFixed(2),
+        "Gasto": gt.toFixed(2)
+    }
+    historial.push(temp)
+    localStorage.setItem('historial', JSON.stringify(historial));
+    actualizarHistorial()
 
-    var arrayValores = []; // arreglo para los valores de la gráfica
+
+    // GRÁFICO COSTO vs TIEMPO
 
     var chart = new CanvasJS.Chart("chartContainer", {
         height: 300,
@@ -145,6 +164,7 @@ function calcular() {
     });
     chart.render(); // cargar el gráfico
 
+    var limitX = Math.ceil(ttm); // redondeando el valor de las horas totales
     //llenar el arreglo con los valores a mostrar en la gráfica 
     for (let i = 0; i <= limitX; i++) {
         let valores = {
@@ -153,7 +173,6 @@ function calcular() {
         }
         arrayValores.push(valores);
     }
-    console.log(arrayValores)
 
     var count = 0; //contador para ir corriendo los datos del arreglo
     function updateChart() {
@@ -164,45 +183,23 @@ function calcular() {
                 y: arrayValores[count].y
             })
             count = count + 1;
-            console.log(count)
         } else {
             $('#error').show();
         }
     }
 
-
-    // setInterval para ir ejecutanto uno por uno los valores de la gráfica 
-    var flag = true;
-    var interval;
-    var updateInterval = 500;
-
-    $('#playPause').click(function() {
-        if (flag && count < arrayValores.length) {
-            $(this).html('Pause');
-            interval = setInterval(function() {
-                updateChart()
-                updateChart2()
-            }, updateInterval);
-        } else {
-            $(this).html('Play');
-            clearInterval(interval);
-        }
-        flag = !flag;
-    });
-
-
-
+    // GRÁFICO ÁREA vs TIEMPO 
     var chart2 = new CanvasJS.Chart("chartContainer2", {
         height: 300,
         width: 300,
         axisY: {
-            title: "Area (m2)",
+            title: "Área (m2)",
         },
         axisX: {
             title: "Tiempo (hrs)",
         },
         title: {
-            text: "Area Regada por Hora"
+            text: "Área Regada por Hora"
         },
         data: [{
             type: "column",
@@ -228,18 +225,22 @@ function calcular() {
     }
 
 
-    let temp = {
-        "Fechas": fecha + ' ' + hora,
-        "Area": area,
-        "Tipo": tipos[tipoMotor],
-        "Potencia": potencia,
-        "Tiempo": ttm,
-        "Consumo": cl.toFixed(2),
-        "Gasto": gt.toFixed(2)
-    }
-    historial.push(temp)
-    localStorage.setItem('historial', JSON.stringify(historial));
-    actualizarHistorial()
-}
+    // setInterval para ir ejecutanto uno por uno los valores de la gráfica 
+    var flag = true;
+    var interval;
+    var updateInterval = 500;
 
-//console.log(Math.ceil(1.5)); // redondea al mayor
+    $('#playPause').click(function() {
+        if (flag && count < arrayValores.length) {
+            $(this).html('Pause');
+            interval = setInterval(function() {
+                updateChart()
+                updateChart2()
+            }, updateInterval);
+        } else {
+            $(this).html('Play');
+            clearInterval(interval);
+        }
+        flag = !flag;
+    });
+}
