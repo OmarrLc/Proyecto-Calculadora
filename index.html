@@ -28,6 +28,18 @@
                 </div>
             </div>
             <div class="form-group row">
+                <label for="txtPrecio" class="col-sm-6 col-form-label text">Area Minima de Riego por Hora: </label>
+                <div class="col-sm-6 p-0">
+                    <input type="number" required class="form-control text" id="txtMin" placeholder="Area Minima de Riego por Hora..." min="1">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="txtPrecio" class="col-sm-6 col-form-label text">Area Maxima de Riego por Hora: </label>
+                <div class="col-sm-6 p-0">
+                    <input type="number" required class="form-control text" id="txtMax" placeholder="Area Maxima de Riego por Hora..." min="1">
+                </div>
+            </div>
+            <div class="form-group row">
                 <label class="col-sm-6 col-form-label text" for="txtTipoMotor">Tipo de Motor: </label>
                 <select class="col-sm-6 form-control text" id="txtTipoMotor">
                     <option value="">Seleccione un tipo de motor</option>
@@ -46,6 +58,12 @@
                 <label for="txtPrecio" class="col-sm-6 col-form-label text">Precio combustible (Lps): </label>
                 <div class="col-sm-6 p-0">
                     <input type="number" required class="form-control text" id="txtPrecio" placeholder="Precio de combustible..." min="1">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="txtPrecio" class="col-sm-6 col-form-label text">Capacidad del motor (Lps): </label>
+                <div class="col-sm-6 p-0">
+                    <input type="number" required class="form-control text" id="txtCapacidad" placeholder="Precio de combustible..." min="1">
                 </div>
             </div>
             <div class="form-group row mt-5">
@@ -69,7 +87,7 @@
 
     <!-- Modal Calculo -->
     <div class="modal fade" id="modalCalculo" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog ">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title ml-auto" id="exampleModalLabel">Resultado</h5>
@@ -93,7 +111,11 @@
                         </div>
                     </form>
                 </div>
-                <div id="chartContainer" style="height: 370px; width: 100%;"></div>
+                <div class="row">
+                    <div id="chartContainer" class = "col-6" style="height: 370px; width: 100%;"></div>
+                    <div id="chartContainer2" class = "col-6" style="height: 370px; width: 100%;"></div>
+                </div>
+                
                 <button class="btn btn-primary btn-lg m-auto" style="width: 50%;" id="playPause">Play/ Pause</button>
                 <div class="modal-footer text-center">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>

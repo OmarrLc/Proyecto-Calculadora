@@ -33,17 +33,71 @@ actualizarHistorial()
 function calcular() {
     var hoy = new Date()
     var fecha = hoy.getDate() + '-' + ( hoy.getMonth() + 1 ) + '-' + hoy.getFullYear();
-    hora = hoy.getHours() + ':' + hoy.getMinutes() + ':' + hoy.getSeconds();
+    var hora = hoy.getHours() + ':' + hoy.getMinutes() + ':' + hoy.getSeconds();
     const area = parseFloat(document.getElementById('txtTerreno').value)
     const tipoMotor = parseFloat(document.getElementById('txtTipoMotor').value)
     const potencia = parseFloat(document.getElementById('txtPotencia').value)
     const pc = parseFloat(document.getElementById('txtPrecio').value)
-
+    const min = parseFloat(document.getElementById('txtMin').value)
+    const max = parseFloat(document.getElementById('txtMax').value)
+    const capacidad = parseFloat(document.getElementById('txtCapacidad').value) //Capacidad del motor en litros
     //console.log(prueba)
     //  console.log(parseFloat(area))
+    var areatemp = area
     var litros;
     var cl; // consumo en litros 
-    var ttm = area / 10; // tiempo total que trabajará el motor
+    var h = 0
+    var arrayValores2 = []; // arreglo para los valores de la gráfica
+    var promedio
+    while( areatemp > 0){
+        promedio = Math.floor(Math.random() * (max - min) + min)
+        if (areatemp>= promedio){
+            h++;
+            valores = {
+                y: promedio,
+                x: h
+            }
+            areatemp = areatemp- promedio
+        }else{
+            h = h + areatemp/promedio
+            valores = {
+                y: areatemp,
+                x: h
+            }
+            areatemp = 0
+        }
+        console.log(promedio)
+        arrayValores2.push(valores);
+    
+    }
+    var ttm = h; // tiempo total que trabajará el motor
+    var tiempoLlenado
+    var error = false
+    if (tipoMotor === 0) {
+        litros = 0.23
+        tiempoLlenado = capacidad/ (potencia *0.23)
+    }
+
+    if (tipoMotor === 1) {
+        litros = 0.31
+        tiempoLlenado = capacidad/ (potencia *0.31)
+    }
+
+    if (tipoMotor === 2) {
+        litros = 0.43
+        tiempoLlenado = capacidad/ (potencia *0.43)
+    }
+
+    if (tiempoLlenado < ttm){
+        ttm = tiempoLlenado
+        error = true  
+    }
+
+    if(error){
+        document.getElementById("error").disabled = true
+    }else{
+        document.getElementById("error").disabled = false
+    }
     if (tipoMotor === 0) {
         litros = 0.23
         cl = ttm * potencia * 0.23
@@ -72,7 +126,7 @@ function calcular() {
 
     var chart = new CanvasJS.Chart("chartContainer", {
         height: 300,
-        width: 400,
+        width: 300,
         axisY: {
             title: "Costo (Lps)",
         },
@@ -80,7 +134,7 @@ function calcular() {
             title: "Tiempo (hrs)",
         },
         title: {
-            text: "Sistema de riego"
+            text: "Costo por Hora"
         },
         data: [{
             type: "line",
@@ -126,6 +180,7 @@ function calcular() {
             $(this).html('Pause');
             interval = setInterval(function() {
                 updateChart()
+                updateChart2()
             }, updateInterval);
         } else {
             $(this).html('Play');
@@ -133,6 +188,45 @@ function calcular() {
         }
         flag = !flag;
     });
+
+    
+    
+    var chart2 = new CanvasJS.Chart("chartContainer2", {
+        height: 300,
+        width: 300,
+        axisY: {
+            title: "Area (m2)",
+        },
+        axisX: {
+            title: "Tiempo (hrs)",
+        },
+        title: {
+            text: "Area Regada por Hora"
+        },
+        data: [{
+            type: "column",
+            dataPoints: [
+                { x: 0, y: 0 } // mostrar valores antes de iniciar (se pueden quitar si queremos que cargue en blanco la gráfica)
+            ]
+    
+        }]
+    });
+    chart2.render(); // cargar el gráfico
+    
+    
+    var count2 = 0; //contador para ir corriendo los datos del arreglo
+    function updateChart2() {
+        chart2.render();
+        if (count2 < arrayValores.length) {
+            chart2.options.data[0].dataPoints.push({
+                x: arrayValores2[count2].x,
+                y: arrayValores2[count2].y
+            })
+            count2 = count2 + 1;
+        }
+    }
+
+
     let temp = {
         "Fechas": fecha + ' ' + hora,
         "Area": area,
@@ -146,6 +240,5 @@ function calcular() {
     localStorage.setItem('historial',JSON.stringify(historial));
     actualizarHistorial()
 }
-
 
 //console.log(Math.ceil(1.5)); // redondea al mayor
