@@ -89,16 +89,13 @@ function calcular() {
     }
 
     if (tiempoLlenado < ttm) {
+        document.getElementById('error').innerHTML = 'Ha alcanzado la capacidad maxima del motor';
         ttm = tiempoLlenado
         error = true
+    } else {
+        document.getElementById('error').innerHTML = '';
     }
-    /*
-        if (error) {
-            $('#error').show();
-        } else {
-            $('#error').hide();
-        }
-           */
+
     if (tipoMotor === 0) {
         litros = 0.23
         cl = ttm * potencia * litros
