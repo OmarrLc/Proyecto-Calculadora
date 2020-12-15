@@ -49,3 +49,9 @@ body {
     background-color: #206a5d!important;
     color: white;
 }
+
+.error {
+    display: none;
+    color: red;
+    text-align: center;
+}

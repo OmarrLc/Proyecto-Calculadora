@@ -5,15 +5,15 @@ var tipos = ["Diesel", "2 Tiempos", "4 Tiempos"]
 
 var localStorage = window.localStorage;
 
-if (localStorage.getItem('historial')==null){
-    localStorage.setItem('historial',JSON.stringify(historial));
-}
-else{
+if (localStorage.getItem('historial') == null) {
+    localStorage.setItem('historial', JSON.stringify(historial));
+} else {
     historial = JSON.parse(localStorage.getItem('historial'));
 }
-function actualizarHistorial(){
+
+function actualizarHistorial() {
     document.getElementById("registros").innerHTML = ""
-    for(let i=0; i<historial.length;i++){
+    for (let i = 0; i < historial.length; i++) {
         document.getElementById("registros").innerHTML += `
             <tr>
                 <th scope="row">${historial[i].Fechas}</th>
@@ -32,7 +32,7 @@ actualizarHistorial()
 
 function calcular() {
     var hoy = new Date()
-    var fecha = hoy.getDate() + '-' + ( hoy.getMonth() + 1 ) + '-' + hoy.getFullYear();
+    var fecha = hoy.getDate() + '-' + (hoy.getMonth() + 1) + '-' + hoy.getFullYear();
     var hora = hoy.getHours() + ':' + hoy.getMinutes() + ':' + hoy.getSeconds();
     const area = parseFloat(document.getElementById('txtTerreno').value)
     const tipoMotor = parseFloat(document.getElementById('txtTipoMotor').value)
@@ -41,25 +41,25 @@ function calcular() {
     const min = parseFloat(document.getElementById('txtMin').value)
     const max = parseFloat(document.getElementById('txtMax').value)
     const capacidad = parseFloat(document.getElementById('txtCapacidad').value) //Capacidad del motor en litros
-    //console.log(prueba)
-    //  console.log(parseFloat(area))
+        //console.log(prueba)
+        //  console.log(parseFloat(area))
     var areatemp = area
     var litros;
     var cl; // consumo en litros 
     var h = 0
     var arrayValores2 = []; // arreglo para los valores de la gráfica
     var promedio
-    while( areatemp > 0){
+    while (areatemp > 0) {
         promedio = Math.floor(Math.random() * (max - min) + min)
-        if (areatemp>= promedio){
+        if (areatemp >= promedio) {
             h++;
             valores = {
                 y: promedio,
                 x: h
             }
-            areatemp = areatemp- promedio
-        }else{
-            h = h + areatemp/promedio
+            areatemp = areatemp - promedio
+        } else {
+            h = h + areatemp / promedio
             valores = {
                 y: areatemp,
                 x: h
@@ -68,50 +68,52 @@ function calcular() {
         }
         console.log(promedio)
         arrayValores2.push(valores);
-    
+
     }
     var ttm = h; // tiempo total que trabajará el motor
     var tiempoLlenado
     var error = false
     if (tipoMotor === 0) {
         litros = 0.23
-        tiempoLlenado = capacidad/ (potencia *0.23)
+        tiempoLlenado = capacidad / (potencia * litros)
     }
 
     if (tipoMotor === 1) {
         litros = 0.31
-        tiempoLlenado = capacidad/ (potencia *0.31)
+        tiempoLlenado = capacidad / (potencia * litros)
     }
 
     if (tipoMotor === 2) {
         litros = 0.43
-        tiempoLlenado = capacidad/ (potencia *0.43)
+        tiempoLlenado = capacidad / (potencia * litros)
     }
 
-    if (tiempoLlenado < ttm){
+    if (tiempoLlenado < ttm) {
         ttm = tiempoLlenado
-        error = true  
+        error = true
     }
-
-    if(error){
-        document.getElementById("error").disabled = true
-    }else{
-        document.getElementById("error").disabled = false
-    }
+    /*
+        if (error) {
+            $('#error').show();
+        } else {
+            $('#error').hide();
+        }
+           */
     if (tipoMotor === 0) {
         litros = 0.23
-        cl = ttm * potencia * 0.23
+        cl = ttm * potencia * litros
     }
 
     if (tipoMotor === 1) {
         litros = 0.31
-        cl = ttm * potencia * 0.31
+        cl = ttm * potencia * litros
     }
 
     if (tipoMotor === 2) {
         litros = 0.43
-        cl = ttm * potencia * 0.43
+        cl = ttm * potencia * litros
     }
+    console.log(cl)
     var gt = cl * pc // gasto total
     console.log('gasto', gt);
     console.log('consumo', cl)
@@ -166,6 +168,8 @@ function calcular() {
             })
             count = count + 1;
             console.log(count)
+        } else {
+            $('#error').show();
         }
     }
 
@@ -189,8 +193,8 @@ function calcular() {
         flag = !flag;
     });
 
-    
-    
+
+
     var chart2 = new CanvasJS.Chart("chartContainer2", {
         height: 300,
         width: 300,
@@ -208,12 +212,12 @@ function calcular() {
             dataPoints: [
                 { x: 0, y: 0 } // mostrar valores antes de iniciar (se pueden quitar si queremos que cargue en blanco la gráfica)
             ]
-    
+
         }]
     });
     chart2.render(); // cargar el gráfico
-    
-    
+
+
     var count2 = 0; //contador para ir corriendo los datos del arreglo
     function updateChart2() {
         chart2.render();
@@ -234,10 +238,10 @@ function calcular() {
         "Potencia": potencia,
         "Tiempo": ttm,
         "Consumo": cl.toFixed(2),
-        "Gasto":gt.toFixed(2) 
-        }
+        "Gasto": gt.toFixed(2)
+    }
     historial.push(temp)
-    localStorage.setItem('historial',JSON.stringify(historial));
+    localStorage.setItem('historial', JSON.stringify(historial));
     actualizarHistorial()
 }
 

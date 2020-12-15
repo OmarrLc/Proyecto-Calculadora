@@ -112,10 +112,11 @@
                     </form>
                 </div>
                 <div class="row">
-                    <div id="chartContainer" class = "col-6" style="height: 370px; width: 100%;"></div>
-                    <div id="chartContainer2" class = "col-6" style="height: 370px; width: 100%;"></div>
+                    <div id="chartContainer" class="col-6" style="height: 370px; width: 100%;"></div>
+                    <div id="chartContainer2" class="col-6" style="height: 370px; width: 100%;"></div>
                 </div>
-                
+                <span id="error" class="error text-center">Ah alcanzado la capacidad maxima del motor</span>
+
                 <button class="btn btn-primary btn-lg m-auto" style="width: 50%;" id="playPause">Play/ Pause</button>
                 <div class="modal-footer text-center">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
@@ -146,7 +147,7 @@
                                 <th scope="col">Gasto (Lps)</th>
                             </tr>
                         </thead>
-                        <tbody id = "registros">
+                        <tbody id="registros">
 
                         </tbody>
                     </table>
